@@ -40,6 +40,8 @@ public abstract class HorizontalRuler extends InnerRuler {
         ViewGroup parent = (ViewGroup) getParent();//为了解决刻度尺在scrollview这种布局里面滑动冲突问题
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                //记录首个触控点的id
+                mActivePointerId = event.findPointerIndex(event.getActionIndex());
                 if (!mOverScroller.isFinished()) {
                     mOverScroller.abortAnimation();
                 }
@@ -48,11 +50,16 @@ public abstract class HorizontalRuler extends InnerRuler {
                 parent.requestDisallowInterceptTouchEvent(true);//按下时开始让父控件不要处理任何touch事件
                 break;
             case MotionEvent.ACTION_MOVE:
-                float moveX = mLastX - currentX;
+                if (mActivePointerId == INVALID_ID || event.findPointerIndex(mActivePointerId) == INVALID_ID) {
+                    break;
+                }
+                float moveX = mLastX - event.getX(mActivePointerId);
                 mLastX = currentX;
                 scrollBy((int) (moveX), 0);
                 break;
             case MotionEvent.ACTION_UP:
+                mActivePointerId = INVALID_ID;
+                mLastX = 0;
                 //处理松手后的Fling
                 mVelocityTracker.computeCurrentVelocity(1000, mMaximumVelocity);
                 int velocityX = (int) mVelocityTracker.getXVelocity();
@@ -70,6 +77,8 @@ public abstract class HorizontalRuler extends InnerRuler {
                 parent.requestDisallowInterceptTouchEvent(false);//up或者cancel的时候恢复
                 break;
             case MotionEvent.ACTION_CANCEL:
+                mActivePointerId = INVALID_ID;
+                mLastX = 0;
                 if (!mOverScroller.isFinished()) {
                     mOverScroller.abortAnimation();
                 }
