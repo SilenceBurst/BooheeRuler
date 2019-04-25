@@ -202,7 +202,7 @@ public abstract class HorizontalRuler extends InnerRuler {
     protected void scrollBackToCurrentScale(int currentIntScale) {
         float intScrollX = scaleToScrollFloatX(currentIntScale);
         int dx = Math.round((intScrollX - SCALE_TO_PX_FACTOR * getScrollX()) / SCALE_TO_PX_FACTOR);
-        if (dx > minScrollerPx) {
+        if (Math.abs(dx) > minScrollerPx) {
             //渐变回弹
             mOverScroller.startScroll(getScrollX(), getScrollY(), dx, 0, 500);
             invalidate();

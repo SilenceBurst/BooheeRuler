@@ -187,7 +187,7 @@ public abstract class VerticalRuler extends InnerRuler {
     @Override
     protected void scrollBackToCurrentScale(int currentIntScale) {
         int dy = Math.round((scaleToScrollFloatY(currentIntScale) - SCALE_TO_PX_FACTOR * getScrollY()) / SCALE_TO_PX_FACTOR);
-        if (dy > minScrollerPx) {
+        if (Math.abs(dy) > minScrollerPx) {
             //渐变回弹
             mOverScroller.startScroll(getScrollX(), getScrollY(), 0, dy, 500);
             invalidate();
