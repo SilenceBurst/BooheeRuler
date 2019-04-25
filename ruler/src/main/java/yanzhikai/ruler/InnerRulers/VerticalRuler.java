@@ -28,7 +28,6 @@ public abstract class VerticalRuler extends InnerRuler {
     //滑动完之后计算速度是否满足Fling，满足则使用OverScroller来计算Fling滑动
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        float currentY = event.getY();
         //开始速度检测
         if (mVelocityTracker == null) {
             mVelocityTracker = VelocityTracker.obtain();
@@ -43,7 +42,7 @@ public abstract class VerticalRuler extends InnerRuler {
                     mOverScroller.abortAnimation();
                 }
 
-                mLastY = currentY;
+                mLastY = event.getY();
                 parent.requestDisallowInterceptTouchEvent(true);//按下时开始让父控件不要处理任何touch事件
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -51,7 +50,7 @@ public abstract class VerticalRuler extends InnerRuler {
                     break;
                 }
                 float moveY = mLastY - event.getY(mActivePointerId);
-                mLastY = currentY;
+                mLastY = event.getY(mActivePointerId);
                 scrollBy(0, (int) (moveY));
                 break;
             case MotionEvent.ACTION_UP:
